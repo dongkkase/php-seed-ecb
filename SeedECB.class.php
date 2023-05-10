@@ -2,10 +2,10 @@
 require_once("seed.class.php");
 class SeedECB extends Seed
 {
-	private $block          = 16;
-	public  $pbUserKey	    = '';
-	private $paddingValue   = 0;
-	private $pdwRoundKey    = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32);
+    private $block          = 16;
+    public  $pbUserKey      = '';
+    private $paddingValue   = 0;
+    private $pdwRoundKey    = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32);
     var $logview = false;
 
     public function __construct($_key)
@@ -21,14 +21,14 @@ class SeedECB extends Seed
 
         $planBytes = array_slice(unpack('c*',$str), 0);
         if (count($planBytes) == 0) {
-        	return $str;
+            return $str;
         }
 
         $paddingResult = null;
         for ($i=0; $i < count($planBytes); $i++)
-    	{
-    		$paddingResult .= $planBytes[$i];
-    	}
+        {
+            $paddingResult .= $planBytes[$i];
+        }
 
         // $this = new Seed();
         $this->SeedRoundKey($this->pdwRoundKey, array_slice(unpack('c*',$this->pbUserKey), 0)); // 라운드키 생성
@@ -40,12 +40,12 @@ class SeedECB extends Seed
 
         for ($i=0; $i < $rt; $i++)
         {
-        	$sSource = null;
-        	$sTarget = null;
+            $sSource = null;
+            $sTarget = null;
 
-        	$this->arraycopy($inDataBuffer, ($i * $this->block) , $sSource, 0, $this->block);
-        	$this->SeedEncrypt($sSource, $this->pdwRoundKey, $sTarget); // 암호블록을 SEED로 암호화
-        	$this->arraycopy($sTarget, 0, $encryptBytes,($i * $this->block),count($sTarget));
+            $this->arraycopy($inDataBuffer, ($i * $this->block) , $sSource, 0, $this->block);
+            $this->SeedEncrypt($sSource, $this->pdwRoundKey, $sTarget); // 암호블록을 SEED로 암호화
+            $this->arraycopy($sTarget, 0, $encryptBytes,($i * $this->block),count($sTarget));
         }
 
         return base64_encode(call_user_func_array("pack", array_merge(array("c*"), $encryptBytes)));
@@ -60,7 +60,7 @@ class SeedECB extends Seed
         $planBytes = array_slice(unpack('c*',$str), 0); // 평문을 바이트 배열로 변환
         if (count($planBytes) == 0)
         {
-        	return $str;
+            return $str;
         }
 
         // $this = new Seed();
@@ -73,9 +73,9 @@ class SeedECB extends Seed
 
         for ($i=0; $i < $rt; $i++)
         {
-        	$this->arraycopy($planBytes, ($i * $this->block) , $sSource, 0, $this->block);
-        	$this->SeedDecrypt($sSource, $this->pdwRoundKey, $sTarget); // 암호블록을 SEED로 복호화
-        	$this->arraycopy($sTarget, 0, $decryptBytes,($i * $this->block),$this->block);
+            $this->arraycopy($planBytes, ($i * $this->block) , $sSource, 0, $this->block);
+            $this->SeedDecrypt($sSource, $this->pdwRoundKey, $sTarget); // 암호블록을 SEED로 복호화
+            $this->arraycopy($sTarget, 0, $decryptBytes,($i * $this->block),$this->block);
         }
 
 
@@ -84,7 +84,7 @@ class SeedECB extends Seed
         $decryptBytesPaddingResult = null;
         for ($i=0; $i < count($decryptBytesPadding); $i++)
         {
-        	  $decryptBytesPaddingResult .= chr($this->convertMinus128($decryptBytesPadding[$i]));
+              $decryptBytesPaddingResult .= chr($this->convertMinus128($decryptBytesPadding[$i]));
         }
 
         return $decryptBytesPaddingResult;
@@ -107,8 +107,8 @@ class SeedECB extends Seed
     {
         for ($i=$srcPos; $i < $srcPos+$length; $i++)
         {
-        	$dest[$destPos] = $src[$i];
-        	$destPos++;
+            $dest[$destPos] = $src[$i];
+            $destPos++;
         }
     }
 
@@ -127,17 +127,17 @@ class SeedECB extends Seed
         // 64비트가 아닌 경우 그대로 출력
         if(PHP_INT_SIZE > 4)
         {
-        	return $bytes;
+            return $bytes;
         }
 
         if (is_array($bytes))
         {
-        	$ret = array();
-        	foreach($bytes as $val)
+            $ret = array();
+            foreach($bytes as $val)
             {
-        		$ret[] = (($val+128) % 256) -128;
-        	}
-        	return $ret;
+                $ret[] = (($val+128) % 256) -128;
+            }
+            return $ret;
         }
 
         return (($bytes+128) % 256) -128;
@@ -146,10 +146,8 @@ class SeedECB extends Seed
     /**
     * 요청한 Block Size를 맞추기 위해 Padding을 추가한다.
     *
-    * @param source
-    *            byte[] 패딩을 추가할 bytes
-    * @param blockSize
-    *            int block size
+    * @param source byte[] 패딩을 추가할 bytes
+    * @param blockSize int block size
     * @return byte[] 패딩이 추가 된 결과 bytes
     */
     public function addPadding($planBytes, $block)
@@ -160,30 +158,28 @@ class SeedECB extends Seed
 
         if($paddingCnt != 0)
         {
-        	$this->arraycopy($planBytes, 0, $paddingResult, 0, count($planBytes));
+            $this->arraycopy($planBytes, 0, $paddingResult, 0, count($planBytes));
 
-        	for ($i=0; $i < $addPaddingCnt; $i++)
-        	{
-        		$paddingResult[count($planBytes)+$i] = $this->paddingValue;
-        	}
+            for ($i=0; $i < $addPaddingCnt; $i++)
+            {
+                $paddingResult[count($planBytes)+$i] = $this->paddingValue;
+            }
 
-        	$paddingResult[count($paddingResult) - 1] = $addPaddingCnt;
+            $paddingResult[count($paddingResult) - 1] = $addPaddingCnt;
 
-        	return $paddingResult;
+            return $paddingResult;
         }
         else
         {
-        	return $planBytes;
+            return $planBytes;
         }
     }
 
     /**
     * 요청한 Block Size를 맞추기 위해 추가 된 Padding을 제거한다.
     *
-    * @param source
-    *            byte[] 패딩을 제거할 bytes
-    * @param blockSize
-    *            int block size
+    * @param source byte[] 패딩을 제거할 bytes
+    * @param blockSize int block size
     * @return byte[] 패딩이 제거 된 결과 bytes
     */
     public function removePadding($planBytes, $block)
@@ -195,35 +191,35 @@ class SeedECB extends Seed
 
         if($lastValue <= ($block -1))
         {
-        	$zeroPaddingCount = $lastValue -1;
-        	for ($i=2; $i < ($zeroPaddingCount+2); $i++)
-        	{
-        		if($planBytes[count($planBytes)-1] != $this->paddingValue)
-        		{
-        			$isPadding = FALSE;
-        			break;
-        		}
-        	}
-        	$isPadding = TRUE;
+            $zeroPaddingCount = $lastValue -1;
+            for ($i=2; $i < ($zeroPaddingCount+2); $i++)
+            {
+                if($planBytes[count($planBytes)-1] != $this->paddingValue)
+                {
+                    $isPadding = FALSE;
+                    break;
+                }
+            }
+            $isPadding = TRUE;
 
         }
         else
         {
 
-        	$isPadding = FALSE;
+            $isPadding = FALSE;
 
         }
 
 
         if($isPadding)
         {
-        	$paddingResultCount = count($planBytes) - $lastValue;
-        	$this->arraycopy($planBytes, 0, $paddingResult, 0, $paddingResultCount);
+            $paddingResultCount = count($planBytes) - $lastValue;
+            $this->arraycopy($planBytes, 0, $paddingResult, 0, $paddingResultCount);
         }
         else
         {
 
-        	$paddingResult = $planBytes;
+            $paddingResult = $planBytes;
         }
 
 
