@@ -1,2 +1,3 @@
 # php-seed-ecb
-php kisa seed ecb
+SEED ECB
+====================
