@@ -10,3 +10,4 @@
   <li><a href='https://github.com/qnibus/seed128' target='_blank'>https://github.com/qnibus/seed128</a></li>
 </ul>
 
+해당 암복호화는 PHP7.x, Windows Server 환경에서 테스트했습니다.
