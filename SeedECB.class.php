@@ -1,5 +1,6 @@
 <?php
 require_once("seed.class.php");
+
 class SeedECB extends Seed
 {
     private $block          = 16;
@@ -30,7 +31,6 @@ class SeedECB extends Seed
             $paddingResult .= $planBytes[$i];
         }
 
-        // $this = new Seed();
         $this->SeedRoundKey($this->pdwRoundKey, array_slice(unpack('c*',$this->pbUserKey), 0)); // 라운드키 생성
 
         $inDataBuffer = $this->addPadding($planBytes,$this->block);
@@ -63,7 +63,6 @@ class SeedECB extends Seed
             return $str;
         }
 
-        // $this = new Seed();
         $this->SeedRoundKey($this->pdwRoundKey, array_slice(unpack('c*',$this->pbUserKey), 0)); // 라운드키 생성
 
         $rt = count($planBytes) / $this->block;
@@ -125,7 +124,7 @@ class SeedECB extends Seed
     private function convertMinus128($bytes)
     {
         // 64비트가 아닌 경우 그대로 출력
-        if(PHP_INT_SIZE > 4)
+        if (PHP_INT_SIZE > 4)
         {
             return $bytes;
         }
@@ -133,10 +132,12 @@ class SeedECB extends Seed
         if (is_array($bytes))
         {
             $ret = array();
-            foreach($bytes as $val)
+            
+            foreach ($bytes as $val)
             {
                 $ret[] = (($val+128) % 256) -128;
             }
+            
             return $ret;
         }
 
@@ -156,7 +157,7 @@ class SeedECB extends Seed
         $paddingCnt = count($planBytes) % $block;
         $addPaddingCnt = $block - $paddingCnt;
 
-        if($paddingCnt != 0)
+        if ($paddingCnt != 0)
         {
             $this->arraycopy($planBytes, 0, $paddingResult, 0, count($planBytes));
 
@@ -189,12 +190,12 @@ class SeedECB extends Seed
 
         $lastValue = $planBytes[count($planBytes)-1];
 
-        if($lastValue <= ($block -1))
+        if ($lastValue <= ($block -1))
         {
             $zeroPaddingCount = $lastValue -1;
             for ($i=2; $i < ($zeroPaddingCount+2); $i++)
             {
-                if($planBytes[count($planBytes)-1] != $this->paddingValue)
+                if ($planBytes[count($planBytes)-1] != $this->paddingValue)
                 {
                     $isPadding = FALSE;
                     break;
@@ -211,7 +212,7 @@ class SeedECB extends Seed
         }
 
 
-        if($isPadding)
+        if ($isPadding)
         {
             $paddingResultCount = count($planBytes) - $lastValue;
             $this->arraycopy($planBytes, 0, $paddingResult, 0, $paddingResultCount);
